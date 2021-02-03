@@ -122,7 +122,7 @@ class CrimeFragment : Fragment() {
     }
 
     private fun updateDate() {
-        dateButton.text = crime.date.toString()
+        dateButton.text = DateFormat.format("EEEE, MMM dd, yyyy", crime.date)
     }
 
 }
