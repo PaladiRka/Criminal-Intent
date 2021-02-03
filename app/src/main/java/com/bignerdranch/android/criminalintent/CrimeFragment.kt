@@ -11,13 +11,16 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.widget.ViewPager2
 import java.util.*
 
+enum class Direction {
+    ONLY_RIGHT, ONLY_LEFT, BOTH
+}
 
 class CrimeFragment : Fragment() {
     companion object {
+        const val ARG_CRIME_MODE = "crime_mode"
         private const val ARG_CRIME_ID = "crime_id"
         private const val DIALOG_DATE = "DialogDate"
         private const val REQUEST_DATE = 0
@@ -80,14 +83,15 @@ class CrimeFragment : Fragment() {
         }
 
         homeButton = v.findViewById(R.id.home_button)
-        val position: Int
-//        homeButton.isEnabled =
+        val mode = arguments?.getSerializable(ARG_CRIME_MODE)
+        homeButton.isEnabled = (mode != Direction.ONLY_RIGHT)
         homeButton.setOnClickListener {
             val pager = activity?.findViewById<View>(R.id.crime_view_pager) as ViewPager2
             pager.currentItem = 0
         }
 
         endButton = v.findViewById(R.id.end_button)
+        endButton.isEnabled = (mode != Direction.ONLY_LEFT)
         endButton.setOnClickListener {
             val pager = activity?.findViewById<View>(R.id.crime_view_pager) as ViewPager2
             pager.currentItem = CrimeLab.crimes.size - 1

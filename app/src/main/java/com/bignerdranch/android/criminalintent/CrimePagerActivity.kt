@@ -12,7 +12,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import java.util.*
 
-class CrimePagerActivity: AppCompatActivity() {
+class CrimePagerActivity : AppCompatActivity() {
     companion object {
         private const val EXTRA_CRIME_ID = "com.bignerdranch.android.criminalintent.crime_id"
 
@@ -39,30 +39,21 @@ class CrimePagerActivity: AppCompatActivity() {
             override fun createFragment(position: Int): Fragment {
                 val crime = crimes[position]
                 val fragment = CrimeFragment.newInstance(crime.id)
-
-//                val homeButton = fragment.activity?.findViewById<View>(R.id.home_button) as Button
-//                homeButton.isEnabled = position != 0
-//                val endButton = fragment.activity?.findViewById<View>(R.id.end_button) as Button
-//                endButton.isEnabled = position != (crimes.size - 1)
-
-//                homeButton.setOnClickListener {
-//                    val pager = activity!!.findViewById<View>(R.id.crime_view_pager) as ViewPager2
-//                    pager.currentItem = 0
-//                }
-//
-//                endButton = v.findViewById(R.id.end_button)
-//                endButton.setOnClickListener {
-//                    val pager = activity!!.findViewById<View>(R.id.crime_view_pager) as ViewPager2
-//                    pager.currentItem = CrimeLab.crimes.size - 1
-//                }
+                val mode = when (position) {
+                    0 -> Direction.ONLY_RIGHT
+                    crimes.size - 1 -> Direction.ONLY_LEFT
+                    else -> Direction.BOTH
+                }
+                fragment.arguments?.putSerializable(CrimeFragment.ARG_CRIME_MODE, mode)
 
                 return fragment
             }
         }
+
         val fragmentManager: FragmentManager = supportFragmentManager
         viewPager.adapter = MyFragmentStateAdapter(fragmentManager)
-        for((i, _) in crimes.withIndex()){
-            if(crimes[i].id == crimeId){
+        for ((i, _) in crimes.withIndex()) {
+            if (crimes[i].id == crimeId) {
                 viewPager.currentItem = i
                 break
             }
