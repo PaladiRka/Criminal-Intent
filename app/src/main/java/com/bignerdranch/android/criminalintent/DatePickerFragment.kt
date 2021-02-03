@@ -44,11 +44,7 @@ class DatePickerFragment : DialogFragment() {
             .setView(view)
             .setTitle(R.string.date_picker_title)
             .setPositiveButton(android.R.string.ok) { _: DialogInterface, _: Int ->
-                val year = datePicker.year
-                val month = datePicker.month
-                val day = datePicker.dayOfMonth
-                val date = GregorianCalendar(year, month, day).time
-                sendResult(Activity.RESULT_OK, date)
+                sendResult(Activity.RESULT_OK, GregorianCalendar(datePicker.year, datePicker.month, datePicker.dayOfMonth).time)
             }.create()
     }
 
