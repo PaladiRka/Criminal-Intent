@@ -1,9 +1,11 @@
 package com.bignerdranch.android.criminalintent
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -75,12 +77,12 @@ class CrimeFragment : Fragment() {
         })
 
         dateButton = v.findViewById(R.id.crime_date)
-        dateButton.text = crime.date.toString()
         dateButton.setOnClickListener {
             val dialog = DatePickerFragment.newInstance(crime.date)
             dialog.setTargetFragment(this, REQUEST_DATE)
             fragmentManager?.let { manager -> dialog.show(manager, DIALOG_DATE) }
         }
+        updateDate()
 
         homeButton = v.findViewById(R.id.home_button)
         val mode = arguments?.getSerializable(ARG_CRIME_MODE)
@@ -106,4 +108,21 @@ class CrimeFragment : Fragment() {
 
         return v
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_OK) {
+            return
+        }
+
+        if (requestCode == REQUEST_DATE) {
+            val date = data?.getSerializableExtra(DatePickerFragment.EXTRA_DATE) as Date
+            crime.date = date
+            updateDate()
+        }
+    }
+
+    private fun updateDate() {
+        dateButton.text = crime.date.toString()
+    }
+
 }

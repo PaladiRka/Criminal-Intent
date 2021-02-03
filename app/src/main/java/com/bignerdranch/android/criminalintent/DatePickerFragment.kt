@@ -1,7 +1,10 @@
 package com.bignerdranch.android.criminalintent
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +13,9 @@ import androidx.fragment.app.DialogFragment
 import java.util.*
 
 class DatePickerFragment : DialogFragment() {
-    companion object{
+    companion object {
         private const val ARG_DATE = "date"
+        const val EXTRA_DATE = "com.bignerdranch.android.criminalintent.date*"
         fun newInstance(date: Date): DatePickerFragment {
             val args = Bundle()
             args.putSerializable(ARG_DATE, date)
@@ -21,6 +25,7 @@ class DatePickerFragment : DialogFragment() {
             return fragment
         }
     }
+
     private lateinit var datePicker: DatePicker
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val date: Date = arguments?.getSerializable(ARG_DATE) as Date
@@ -38,6 +43,21 @@ class DatePickerFragment : DialogFragment() {
         return AlertDialog.Builder(activity)
             .setView(view)
             .setTitle(R.string.date_picker_title)
-            .setPositiveButton(android.R.string.ok, null).create()
+            .setPositiveButton(android.R.string.ok) { _: DialogInterface, _: Int ->
+                val year = datePicker.year
+                val month = datePicker.month
+                val day = datePicker.dayOfMonth
+                val date = GregorianCalendar(year, month, day).time
+                sendResult(Activity.RESULT_OK, date)
+            }.create()
+    }
+
+    private fun sendResult(resultCode: Int, date: Date) {
+        if (targetFragment != null) {
+            val intent = Intent()
+            intent.putExtra(EXTRA_DATE, date)
+
+            targetFragment!!.onActivityResult(targetRequestCode, resultCode, intent)
+        }
     }
 }
