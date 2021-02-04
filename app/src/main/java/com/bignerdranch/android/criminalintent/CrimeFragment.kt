@@ -49,6 +49,23 @@ class CrimeFragment : Fragment() {
         super.onCreate(savedInstanceState)
         val crimeId: UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
         crime = CrimeLab.getCrime(crimeId)!!
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_crime, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.delete_crime -> {
+                CrimeLab.deleteCrime(crime)
+                activity?.finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onCreateView(
