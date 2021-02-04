@@ -10,6 +10,10 @@ object CrimeLab {
         crimes += crime
     }
 
+    fun deleteCrime(crime: Crime) {
+        crimes.remove(crime)
+    }
+
     fun getCrime(id: UUID): Crime? {
         for (myCrime: Crime in crimes) {
             if (myCrime.id == id) {
