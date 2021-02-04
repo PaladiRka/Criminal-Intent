@@ -70,7 +70,7 @@ class CrimeListFragment : Fragment() {
 
     private fun updateSubtitle() {
         val crimeCount = CrimeLab.crimes.size
-        val subtitle = if (subtitleVisible) getString(R.string.subtitle_format, crimeCount) else null
+        val subtitle = if (subtitleVisible) resources.getQuantityString(R.plurals.subtitle_plural, crimeCount, crimeCount) else null
         val activity = activity as AppCompatActivity
         activity.supportActionBar?.subtitle = subtitle
     }
