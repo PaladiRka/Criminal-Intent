@@ -10,6 +10,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ import java.util.*
 class CrimeListFragment : Fragment() {
     private lateinit var crimeRecyclerView: RecyclerView
     private var adapter: CrimeAdapter? = null
+    private var subtitleVisible: Boolean = false
 
     companion object {
         private const val REQUEST_CRIME: Int = 1
@@ -37,6 +39,8 @@ class CrimeListFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.fragment_crime_list, menu)
+        val subtitleItem = menu.findItem(R.id.show_subtitle)
+        subtitleItem.setTitle(if (subtitleVisible) R.string.hide_subtitle else R.string.show_subtitle)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -48,8 +52,21 @@ class CrimeListFragment : Fragment() {
                 startActivity(intent)
                 true
             }
+            R.id.show_subtitle -> {
+                subtitleVisible = !subtitleVisible
+                activity?.invalidateOptionsMenu()
+                updateSubtitle()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun updateSubtitle() {
+        val crimeCount = CrimeLab.crimes.size
+        val subtitle = if (subtitleVisible) getString(R.string.subtitle_format, crimeCount) else null
+        val activity = activity as AppCompatActivity
+        activity.supportActionBar?.subtitle = subtitle
     }
 
     override fun onCreateView(
@@ -71,6 +88,7 @@ class CrimeListFragment : Fragment() {
             adapter = CrimeAdapter(CrimeLab.crimes)
             crimeRecyclerView.adapter = adapter
         }
+        updateSubtitle()
     }
 
     private abstract inner class CrimeHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
