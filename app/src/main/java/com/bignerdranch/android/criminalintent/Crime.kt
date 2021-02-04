@@ -4,13 +4,7 @@ import java.util.*
 
 class Crime(val requiresPolice: Boolean) {
     val id: UUID = UUID.randomUUID()
-        get() = field
     var date: Date = Date()
-        get() = field
-    var title: String = null.toString()
-        get() = field
-        set(value) {
-            field = value
-        }
+    var title: String = ""
     var isSolved: Boolean = false
 }
