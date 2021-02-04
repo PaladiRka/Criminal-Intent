@@ -44,7 +44,7 @@ class CrimeListFragment : Fragment() {
             R.id.new_crime -> {
                 val crime = Crime(false)
                 CrimeLab.addCrime(crime)
-                val intent = activity?.let { CrimePagerActivity.newIntent(it, crime.id) }
+                val intent = activity?.let { newIntent(it, crime.id) }
                 startActivity(intent)
                 true
             }
