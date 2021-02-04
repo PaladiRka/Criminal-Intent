@@ -24,6 +24,7 @@ class CrimeListFragment : Fragment() {
 
     companion object {
         private const val REQUEST_CRIME: Int = 1
+        private const val SAVED_SUBTITLE_VISIBLE = "subtitle"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +35,11 @@ class CrimeListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         updateUI()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(SAVED_SUBTITLE_VISIBLE, subtitleVisible)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -77,6 +83,9 @@ class CrimeListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_crime_list, container, false)
         crimeRecyclerView = view.findViewById(R.id.crime_recycler_view)
         crimeRecyclerView.layoutManager = LinearLayoutManager(activity)
+        if (savedInstanceState != null) {
+            subtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE)
+        }
         updateUI()
         return view
     }
