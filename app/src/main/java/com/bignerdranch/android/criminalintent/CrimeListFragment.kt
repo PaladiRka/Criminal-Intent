@@ -5,9 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateFormat
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -21,7 +19,8 @@ import java.util.*
 class CrimeListFragment : Fragment() {
     private lateinit var crimeRecyclerView: RecyclerView
     private var adapter: CrimeAdapter? = null
-    companion object{
+
+    companion object {
         private const val REQUEST_CRIME: Int = 1
     }
 
@@ -75,12 +74,13 @@ class CrimeListFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == REQUEST_CRIME){
-            if(resultCode == Activity.RESULT_OK)
-            Toast.makeText(activity, "Element was changed", Toast.LENGTH_SHORT).show()
+        if (requestCode == REQUEST_CRIME) {
+            if (resultCode == Activity.RESULT_OK)
+                Toast.makeText(activity, "Element was changed", Toast.LENGTH_SHORT).show()
 //            adapter.notifyItemChanged()
         }
     }
+
     private inner class LightCrimeHolder(itemView: View) : CrimeHolder(itemView) {
         val solvedImageView: ImageView = itemView.findViewById((R.id.crime_solved))
         override fun bind(crime: Crime) {
