@@ -9,4 +9,8 @@
     <string name="crime_date">Crime Date</string>
     <string name="police_required">police required</string>
     <string name="date_picker_title">Date of crime:</string>
+    <string name="new_crime">New Crime</string>
+    <string name="show_subtitle">Show Subtitle</string>
+    <string name="hide_subtitle">Side Subtitle</string>
+    <string name="subtitle_format">%1$d crimes</string>
 </resources>
