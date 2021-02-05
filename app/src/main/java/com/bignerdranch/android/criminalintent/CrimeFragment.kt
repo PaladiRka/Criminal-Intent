@@ -48,7 +48,7 @@ class CrimeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val crimeId: UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
-        crime = CrimeLab.getCrime(crimeId)!!
+        crime = CrimeLab.get(activity!!).getCrime(crimeId)!!
         setHasOptionsMenu(true)
     }
 
@@ -60,7 +60,7 @@ class CrimeFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.delete_crime -> {
-                CrimeLab.deleteCrime(crime)
+                CrimeLab.get(activity!!).deleteCrime(crime)
                 activity?.finish()
                 true
             }
@@ -111,7 +111,7 @@ class CrimeFragment : Fragment() {
         endButton.isEnabled = (mode != Direction.ONLY_LEFT)
         endButton.setOnClickListener {
             val pager = activity?.findViewById<View>(R.id.crime_view_pager) as ViewPager2
-            pager.currentItem = CrimeLab.crimes.size - 1
+            pager.currentItem = CrimeLab.get(activity!!).crimes.size - 1
         }
 
         solvedCheckBox = v.findViewById(R.id.crime_solved)
