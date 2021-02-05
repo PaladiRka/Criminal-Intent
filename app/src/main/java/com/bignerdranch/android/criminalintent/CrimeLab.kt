@@ -14,8 +14,16 @@ object CrimeLab {
         crimes.remove(crime)
     }
 
+    fun clearCrimes() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            crimes.removeIf { it.title == "" }
+        } else {
+            crimes.removeAll { it.title == "" }
+        }
+    }
+
     fun getCrime(id: UUID): Crime? {
-        for (myCrime: Crime in crimes) {
+        for (myCrime in crimes) {
             if (myCrime.id == id) {
                 return myCrime
             }

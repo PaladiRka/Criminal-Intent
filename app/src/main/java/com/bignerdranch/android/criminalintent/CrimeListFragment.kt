@@ -14,8 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bignerdranch.android.criminalintent.CrimeLab.clearCrimes
 import com.bignerdranch.android.criminalintent.CrimePagerActivity.Companion.newIntent
-import java.util.*
+
 
 class CrimeListFragment : Fragment() {
     private lateinit var crimeRecyclerView: RecyclerView
@@ -34,6 +35,7 @@ class CrimeListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        clearCrimes()
         updateUI()
     }
 
@@ -70,7 +72,11 @@ class CrimeListFragment : Fragment() {
 
     private fun updateSubtitle() {
         val crimeCount = CrimeLab.crimes.size
-        val subtitle = if (subtitleVisible) resources.getQuantityString(R.plurals.subtitle_plural, crimeCount, crimeCount) else null
+        val subtitle = if (subtitleVisible) resources.getQuantityString(
+            R.plurals.subtitle_plural,
+            crimeCount,
+            crimeCount
+        ) else null
         val activity = activity as AppCompatActivity
         activity.supportActionBar?.subtitle = subtitle
     }
