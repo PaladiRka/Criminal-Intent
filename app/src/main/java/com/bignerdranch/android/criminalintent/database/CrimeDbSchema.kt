@@ -1,7 +1,7 @@
 package com.bignerdranch.android.criminalintent.database
 
 class CrimeDbSchema {
-    companion object CrimeTable {
+    object CrimeTable {
         const val NAME = "crimes"
         object Cols {
             const val UUID = "uuid"
