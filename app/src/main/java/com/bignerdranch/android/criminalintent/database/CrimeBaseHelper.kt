@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Parcel
 import android.os.Parcelable
+import com.bignerdranch.android.criminalintent.database.CrimeDbSchema.CrimeTable
 
 class CrimeBaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, VERSION) {
     companion object {
@@ -15,12 +16,12 @@ class CrimeBaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
 
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(
-            "create table" + CrimeDbSchema.NAME + "(" +
+            "create table " + CrimeTable.NAME + "(" +
                     " _id integer primary key autoincrement, " +
-                    CrimeDbSchema.CrimeTable.Cols.UUID + ", " +
-                    CrimeDbSchema.CrimeTable.Cols.TITLE + ", " +
-                    CrimeDbSchema.CrimeTable.Cols.DATE + ", " +
-                    CrimeDbSchema.CrimeTable.Cols.SOLVED + ")"
+                    CrimeTable.Cols.UUID + ", " +
+                    CrimeTable.Cols.TITLE + ", " +
+                    CrimeTable.Cols.DATE + ", " +
+                    CrimeTable.Cols.SOLVED + ")"
         )
     }
 
