@@ -167,7 +167,7 @@ class CrimeListFragment : Fragment() {
 
     }
 
-    private inner class CrimeAdapter(private val crimes: List<Crime>) :
+    private inner class CrimeAdapter(var crimes: List<Crime>) :
         RecyclerView.Adapter<CrimeHolder>() {
 
         override fun getItemViewType(position: Int): Int {
@@ -200,6 +200,5 @@ class CrimeListFragment : Fragment() {
         override fun getItemCount(): Int {
             return crimes.size
         }
-
     }
 }
