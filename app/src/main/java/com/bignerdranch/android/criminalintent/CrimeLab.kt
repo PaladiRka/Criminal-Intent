@@ -1,13 +1,17 @@
 package com.bignerdranch.android.criminalintent
 
+import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.bignerdranch.android.criminalintent.database.CrimeBaseHelper
+import com.bignerdranch.android.criminalintent.database.CrimeCursorWrapper
 import java.util.*
+import com.bignerdranch.android.criminalintent.database.CrimeDbSchema.CrimeTable
+import kotlin.collections.ArrayList
 
 class CrimeLab private constructor(private val context: Context) {
-    val crimes = mutableListOf<Crime>()
-    val database: SQLiteDatabase = CrimeBaseHelper(context).writableDatabase
+    private val database: SQLiteDatabase = CrimeBaseHelper(context).writableDatabase
 
     companion object {
         var crimeLab: CrimeLab? = null
@@ -17,31 +21,90 @@ class CrimeLab private constructor(private val context: Context) {
             }
             return CrimeLab(context)
         }
+
+        private fun getContentValues(crime: Crime): ContentValues {
+            val values = ContentValues()
+            values.put(CrimeTable.Cols.UUID, crime.id.toString())
+            values.put(CrimeTable.Cols.TITLE, crime.title)
+            values.put(CrimeTable.Cols.DATE, crime.date.time)
+            values.put(CrimeTable.Cols.SOLVED, if (crime.isSolved) 1 else 0)
+            return values
+        }
     }
 
 
     fun addCrime(crime: Crime) {
-        crimes += crime
+        val values = getContentValues(crime)
+        database.insert(CrimeTable.NAME, null, values)
     }
 
     fun deleteCrime(crime: Crime) {
-        crimes.remove(crime)
+        val values = getContentValues(crime)
+        database.delete(CrimeTable.NAME, CrimeTable.Cols.UUID + " = ?", Array(1) { crime.id.toString() }) // TODO remove elem
     }
 
     fun clearCrimes() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            crimes.removeIf { it.title == "" }
+//            crimes.removeIf { it.title == "" }
         } else {
-            crimes.removeAll { it.title == "" }
+//            crimes.removeAll { it.title == "" }
         }
     }
 
     fun getCrime(id: UUID): Crime? {
-        for (myCrime in crimes) {
-            if (myCrime.id == id) {
-                return myCrime
+        val cursor = queryCrimes(
+            CrimeTable.Cols.UUID + " = ?",
+            Array(1) { id.toString() }
+        )
+        try {
+            if (cursor.count == 0) {
+                return null
             }
+
+            cursor.moveToFirst()
+            return cursor.getCrime()
+        } finally {
+            cursor.close()
         }
-        return null
+    }
+
+    fun getCrimes(): List<Crime> {
+        val crimes = ArrayList<Crime>()
+        val cursor = queryCrimes(null, null)
+
+        try {
+            cursor.moveToFirst()
+            while (!cursor.isAfterLast) {
+                crimes.add(cursor.getCrime())
+                cursor.moveToNext()
+            }
+        } finally {
+            cursor.close()
+        }
+        return crimes
+    }
+
+    fun updateCrime(crime: Crime) {
+        val uuidString = crime.id.toString()
+        val values = getContentValues(crime)
+
+        database.update(
+            CrimeTable.NAME,
+            values,
+            CrimeTable.Cols.UUID + " = ?",
+            Array(1) { uuidString })
+    }
+
+    private fun queryCrimes(whereClause: String?, whereArgs: Array<String>?): CrimeCursorWrapper {
+        val cursor = database.query(
+            CrimeTable.NAME,
+            null,
+            whereClause,
+            whereArgs,
+            null,
+            null,
+            null,
+        )
+        return CrimeCursorWrapper(cursor)
     }
 }

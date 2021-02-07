@@ -111,7 +111,7 @@ class CrimeFragment : Fragment() {
         endButton.isEnabled = (mode != Direction.ONLY_LEFT)
         endButton.setOnClickListener {
             val pager = activity?.findViewById<View>(R.id.crime_view_pager) as ViewPager2
-            pager.currentItem = CrimeLab.get(activity!!).crimes.size - 1
+            pager.currentItem = CrimeLab.get(activity!!).getCrimes().size - 1
         }
 
         solvedCheckBox = v.findViewById(R.id.crime_solved)
@@ -122,6 +122,12 @@ class CrimeFragment : Fragment() {
         }
 
         return v
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        CrimeLab.get(activity!!).updateCrime(crime)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

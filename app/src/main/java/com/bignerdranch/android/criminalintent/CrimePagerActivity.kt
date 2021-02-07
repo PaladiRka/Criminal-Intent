@@ -29,7 +29,7 @@ class CrimePagerActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.crime_view_pager)
         val crimeId: UUID = intent.getSerializableExtra(EXTRA_CRIME_ID) as UUID
 
-        crimes = CrimeLab.get(this).crimes
+        crimes = CrimeLab.get(this).getCrimes()
 
         class MyFragmentStateAdapter(fm: FragmentManager) : FragmentStateAdapter(fm, lifecycle) {
             override fun getItemCount(): Int = crimes.size

@@ -70,7 +70,7 @@ class CrimeListFragment : Fragment() {
     }
 
     private fun updateSubtitle() {
-        val crimeCount = CrimeLab.get(activity!!).crimes.size
+        val crimeCount = CrimeLab.get(activity!!).getCrimes().size
         val subtitle = if (subtitleVisible) resources.getQuantityString(
             R.plurals.subtitle_plural,
             crimeCount,
@@ -98,8 +98,9 @@ class CrimeListFragment : Fragment() {
     private fun updateUI() {
         if (adapter != null) {
             adapter!!.notifyDataSetChanged()
+            adapter!!.crimes = CrimeLab.get(activity!!).getCrimes()
         } else {
-            adapter = CrimeAdapter(CrimeLab.get(activity!!).crimes)
+            adapter = CrimeAdapter(CrimeLab.get(activity!!).getCrimes())
             crimeRecyclerView.adapter = adapter
         }
         updateSubtitle()
