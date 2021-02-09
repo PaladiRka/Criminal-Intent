@@ -7,4 +7,5 @@ class Crime(val requiresPolice: Boolean, val id: UUID) {
     var date: Date = Date()
     var title: String = ""
     var isSolved: Boolean = false
+    var suspect: String = ""
 }

@@ -21,7 +21,9 @@ class CrimeBaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
                     CrimeTable.Cols.UUID + ", " +
                     CrimeTable.Cols.TITLE + ", " +
                     CrimeTable.Cols.DATE + ", " +
-                    CrimeTable.Cols.SOLVED + ")"
+                    CrimeTable.Cols.SOLVED + ", " +
+                    CrimeTable.Cols.SUSPECT +
+                    ")"
         )
     }
 
