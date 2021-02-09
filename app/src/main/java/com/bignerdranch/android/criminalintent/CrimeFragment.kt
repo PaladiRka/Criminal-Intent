@@ -98,7 +98,8 @@ class CrimeFragment : Fragment() {
             intent.type = "text/plain"
             intent.putExtra(Intent.EXTRA_TEXT, getCrimeReport())
             intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject))
-            startActivity(intent)
+            val chooseIntent = Intent.createChooser(intent, getString(R.string.send_report))
+            startActivity(chooseIntent)
         }
 
         dateButton = v.findViewById(R.id.crime_date)
