@@ -44,6 +44,7 @@ class CrimeFragment : Fragment() {
     private lateinit var solvedCheckBox: CheckBox
     private lateinit var homeButton: Button
     private lateinit var endButton: Button
+    private lateinit var reportButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,6 +91,15 @@ class CrimeFragment : Fragment() {
 
             }
         })
+
+        reportButton = v.findViewById(R.id.crime_report)
+        reportButton.setOnClickListener {
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT, getCrimeReport())
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject))
+            startActivity(intent)
+        }
 
         dateButton = v.findViewById(R.id.crime_date)
         dateButton.setOnClickListener {
@@ -144,6 +154,18 @@ class CrimeFragment : Fragment() {
 
     private fun updateDate() {
         dateButton.text = DateFormat.format("EEEE, MMM dd, yyyy", crime.date)
+    }
+
+    private fun getCrimeReport(): String {
+        val solvedString =
+            if (crime.isSolved) getString(R.string.crime_report_solved) else getString(R.string.crime_report_unsolved)
+        val dateFormat = "EEE, MMM dd"
+        val dateString = DateFormat.format(dateFormat, crime.date).toString()
+        val title = crime.title
+
+        val suspect =
+            if (crime.suspect == "") getString(R.string.crime_report_no_suspect) else getString(R.string.crime_report_suspect)
+        return getString(R.string.crime_report, title, dateString, solvedString, suspect)
     }
 
 }
