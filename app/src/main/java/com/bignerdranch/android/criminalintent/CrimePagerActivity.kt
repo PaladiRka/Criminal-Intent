@@ -38,7 +38,7 @@ class CrimePagerActivity : AppCompatActivity() {
                 val crime = crimes[position]
                 val fragment = CrimeFragment.newInstance(crime.id)
                 val mode = when (position) {
-                    0 -> Direction.ONLY_RIGHT
+                    0 -> if (crimes.size == 1) Direction.NOWHERE else Direction.ONLY_RIGHT
                     crimes.size - 1 -> Direction.ONLY_LEFT
                     else -> Direction.BOTH
                 }

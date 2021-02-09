@@ -15,7 +15,7 @@ import androidx.viewpager2.widget.ViewPager2
 import java.util.*
 
 enum class Direction {
-    ONLY_RIGHT, ONLY_LEFT, BOTH
+    ONLY_RIGHT, ONLY_LEFT, BOTH, NOWHERE
 }
 
 class CrimeFragment : Fragment() {
@@ -101,14 +101,14 @@ class CrimeFragment : Fragment() {
 
         homeButton = v.findViewById(R.id.home_button)
         val mode = arguments?.getSerializable(ARG_CRIME_MODE)
-        homeButton.isEnabled = (mode != Direction.ONLY_RIGHT)
+        homeButton.isEnabled = ((mode != Direction.ONLY_RIGHT) && (mode != Direction.NOWHERE))
         homeButton.setOnClickListener {
             val pager = activity?.findViewById<View>(R.id.crime_view_pager) as ViewPager2
             pager.currentItem = 0
         }
 
         endButton = v.findViewById(R.id.end_button)
-        endButton.isEnabled = (mode != Direction.ONLY_LEFT)
+        endButton.isEnabled = ((mode != Direction.ONLY_LEFT) && (mode != Direction.NOWHERE))
         endButton.setOnClickListener {
             val pager = activity?.findViewById<View>(R.id.crime_view_pager) as ViewPager2
             pager.currentItem = CrimeLab.get(activity!!).getCrimes().size - 1
