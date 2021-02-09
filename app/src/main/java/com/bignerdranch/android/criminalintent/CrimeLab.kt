@@ -10,16 +10,17 @@ import java.util.*
 import com.bignerdranch.android.criminalintent.database.CrimeDbSchema.CrimeTable
 import kotlin.collections.ArrayList
 
-class CrimeLab private constructor(private val context: Context) {
-    private val database: SQLiteDatabase = CrimeBaseHelper(context).writableDatabase
+class CrimeLab private constructor(context: Context) {
+    private val context: Context = context.applicationContext
+    private val database: SQLiteDatabase = CrimeBaseHelper(this.context).writableDatabase
 
     companion object {
         var crimeLab: CrimeLab? = null
         fun get(context: Context): CrimeLab {
-            if (crimeLab != null) {
+            if (crimeLab == null) {
                 crimeLab = CrimeLab(context)
             }
-            return CrimeLab(context)
+            return crimeLab!!
         }
 
         private fun getContentValues(crime: Crime): ContentValues {
@@ -40,7 +41,10 @@ class CrimeLab private constructor(private val context: Context) {
 
     fun deleteCrime(crime: Crime) {
         val values = getContentValues(crime)
-        database.delete(CrimeTable.NAME, CrimeTable.Cols.UUID + " = ?", Array(1) { crime.id.toString() }) // TODO remove elem
+        database.delete(
+            CrimeTable.NAME,
+            CrimeTable.Cols.UUID + " = ?",
+            Array(1) { crime.id.toString() }) // TODO remove elem
     }
 
     fun clearCrimes() {
