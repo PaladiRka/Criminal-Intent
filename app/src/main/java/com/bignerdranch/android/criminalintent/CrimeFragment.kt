@@ -2,6 +2,8 @@ package com.bignerdranch.android.criminalintent
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.text.Editable
@@ -162,6 +164,24 @@ class CrimeFragment : Fragment() {
             val date = data?.getSerializableExtra(DatePickerFragment.EXTRA_DATE) as Date
             crime.date = date
             updateDate()
+        } else if (requestCode == REQUEST_CONTACT && data != null) {
+            val contactUri: Uri = data.data as Uri
+            val queryFields = Array(1) { ContactsContract.Contacts.DISPLAY_NAME }
+            val cursor = activity?.contentResolver?.query(contactUri, queryFields, null, null, null)
+            try {
+                if (cursor!!.count == 0) {
+                    crime.suspect = ""
+                    suspectButton.text = ""
+                    return
+                }
+
+                cursor.moveToFirst()
+                val suspect = cursor.getString(0)
+                crime.suspect = suspect
+                suspectButton.text = suspect
+            } finally {
+                cursor?.close()
+            }
         }
     }
 
