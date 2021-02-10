@@ -115,8 +115,8 @@ class CrimeFragment : Fragment() {
         }
         updateDate()
 
-        homeButton = v.findViewById(R.id.home_button)
         val mode = arguments?.getSerializable(ARG_CRIME_MODE)
+        homeButton = v.findViewById(R.id.home_button)
         homeButton.isEnabled = ((mode != Direction.ONLY_RIGHT) && (mode != Direction.NOWHERE))
         homeButton.setOnClickListener {
             val pager = activity?.findViewById<View>(R.id.crime_view_pager) as ViewPager2
@@ -148,7 +148,11 @@ class CrimeFragment : Fragment() {
         }
 
         val packageManager = activity?.packageManager
-        if (packageManager?.resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null) {
+        if (packageManager?.resolveActivity(
+                pickContact,
+                PackageManager.MATCH_DEFAULT_ONLY
+            ) == null
+        ) {
             suspectButton.isEnabled = false
         }
 
