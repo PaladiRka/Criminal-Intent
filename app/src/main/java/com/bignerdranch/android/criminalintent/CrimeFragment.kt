@@ -137,15 +137,21 @@ class CrimeFragment : Fragment() {
             returnResult()
         }
 
+        val pickContact = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
         suspectButton = v.findViewById(R.id.crime_suspect)
         suspectButton.setOnClickListener {
-            val pickContact = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
             startActivityForResult(pickContact, REQUEST_CONTACT)
         }
 
         if (crime.suspect != "") {
             suspectButton.text = crime.suspect
         }
+
+        val packageManager = activity?.packageManager
+        if (packageManager?.resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null) {
+            suspectButton.isEnabled = false
+        }
+
         return v
     }
 
