@@ -3,6 +3,7 @@ package com.bignerdranch.android.criminalintent
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.format.DateFormat
@@ -24,6 +25,7 @@ class CrimeFragment : Fragment() {
         private const val ARG_CRIME_ID = "crime_id"
         private const val DIALOG_DATE = "DialogDate"
         private const val REQUEST_DATE = 0
+        private const val REQUEST_CONTACT = 1
         fun newInstance(crimeId: UUID): CrimeFragment {
             val args = Bundle()
             args.putSerializable(ARG_CRIME_ID, crimeId)
@@ -45,6 +47,7 @@ class CrimeFragment : Fragment() {
     private lateinit var homeButton: Button
     private lateinit var endButton: Button
     private lateinit var reportButton: Button
+    private lateinit var suspectButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,6 +135,15 @@ class CrimeFragment : Fragment() {
             returnResult()
         }
 
+        suspectButton = v.findViewById(R.id.crime_suspect)
+        suspectButton.setOnClickListener {
+            val pickContact = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
+            startActivityForResult(pickContact, REQUEST_CONTACT)
+        }
+
+        if (crime.suspect != "") {
+            suspectButton.text = crime.suspect
+        }
         return v
     }
 
