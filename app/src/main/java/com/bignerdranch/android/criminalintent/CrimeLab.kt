@@ -2,12 +2,11 @@ package com.bignerdranch.android.criminalintent
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.bignerdranch.android.criminalintent.database.CrimeBaseHelper
 import com.bignerdranch.android.criminalintent.database.CrimeCursorWrapper
-import java.util.*
 import com.bignerdranch.android.criminalintent.database.CrimeDbSchema.CrimeTable
+import java.util.*
 import kotlin.collections.ArrayList
 
 class CrimeLab private constructor(context: Context) {
@@ -34,27 +33,25 @@ class CrimeLab private constructor(context: Context) {
         }
     }
 
-
     fun addCrime(crime: Crime) {
         val values = getContentValues(crime)
         database.insert(CrimeTable.NAME, null, values)
     }
 
     fun deleteCrime(crime: Crime) {
-        val values = getContentValues(crime)
         database.delete(
             CrimeTable.NAME,
             CrimeTable.Cols.UUID + " = ?",
-            Array(1) { crime.id.toString() }) // TODO remove elem
+            Array(1) { crime.id.toString() })
     }
 
-    fun clearCrimes() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-//            crimes.removeIf { it.title == "" }
-        } else {
-//            crimes.removeAll { it.title == "" }
-        }
-    }
+//    fun clearCrimes() {
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+////            crimes.removeIf { it.title == "" }
+//        } else {
+////            crimes.removeAll { it.title == "" }
+//        }
+//    }
 
     fun getCrime(id: UUID): Crime? {
         val cursor = queryCrimes(

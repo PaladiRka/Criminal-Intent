@@ -23,15 +23,15 @@ enum class Direction {
 
 class CrimeFragment : Fragment() {
     companion object {
-        const val ARG_CRIME_MODE = "crime_mode"
+        private const val ARG_CRIME_MODE = "crime_mode"
         private const val ARG_CRIME_ID = "crime_id"
         private const val DIALOG_DATE = "DialogDate"
         private const val REQUEST_DATE = 0
         private const val REQUEST_CONTACT = 1
-        fun newInstance(crimeId: UUID): CrimeFragment {
+        fun newInstance(crimeId: UUID, direction: Direction): CrimeFragment {
             val args = Bundle()
             args.putSerializable(ARG_CRIME_ID, crimeId)
-
+            args.putSerializable(CrimeFragment.ARG_CRIME_MODE, direction)
             val fragment = CrimeFragment()
             fragment.arguments = args
             return fragment

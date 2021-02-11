@@ -34,7 +34,6 @@ class CrimeListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        CrimeLab.get(activity!!).clearCrimes()
         updateUI()
     }
 
@@ -133,7 +132,6 @@ class CrimeListFragment : Fragment() {
         if (requestCode == REQUEST_CRIME) {
             if (resultCode == Activity.RESULT_OK)
                 Toast.makeText(activity, "Element was changed", Toast.LENGTH_SHORT).show()
-//            adapter.notifyItemChanged()
         }
     }
 
