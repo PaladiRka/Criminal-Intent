@@ -1,11 +1,13 @@
 package com.bignerdranch.android.criminalintent
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.provider.ContactsContract.CommonDataKinds.Phone
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.format.DateFormat
@@ -50,6 +52,7 @@ class CrimeFragment : Fragment() {
     private lateinit var endButton: Button
     private lateinit var reportButton: Button
     private lateinit var suspectButton: Button
+    private lateinit var suspectCallButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,6 +141,16 @@ class CrimeFragment : Fragment() {
         }
 
         val pickContact = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
+
+        suspectCallButton = v.findViewById(R.id.crime_suspect_call)
+        suspectCallButton.setOnClickListener {
+            val intent = Intent(Intent.ACTION_DIAL)
+            val phone = getContactNumber(activity!!, crime.suspect)
+            intent.data = Uri.parse("tel:$phone")
+            context!!.startActivity(intent)
+        }
+        suspectCallButton.isEnabled = crime.suspect != ""
+
         suspectButton = v.findViewById(R.id.crime_suspect)
         suspectButton.setOnClickListener {
             startActivityForResult(pickContact, REQUEST_CONTACT)
@@ -163,6 +176,40 @@ class CrimeFragment : Fragment() {
         super.onPause()
 
         CrimeLab.get(activity!!).updateCrime(crime)
+    }
+
+    private fun getContactNumber(context: Context, name: String): String? {
+        var out: String? = null
+        val cr = context.contentResolver
+        val cursor = cr.query(
+            ContactsContract.Contacts.CONTENT_URI,
+            null,
+            "DISPLAY_NAME = '$name'",
+            null,
+            null
+        ) ?: return null
+        try {
+            if (cursor.moveToFirst()) {
+                val contactId: String =
+                    cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID))
+                //  Get all phone numbers.
+                val phones = cr.query(
+                    Phone.CONTENT_URI, null,
+                    Phone.CONTACT_ID + " = " + contactId, null, null
+                ) ?: return null
+                try {
+                    phones.moveToFirst()
+                    out = phones.getString(phones.getColumnIndex(Phone.NUMBER))
+
+                } finally {
+                    phones.close()
+                }
+            }
+        } finally {
+            cursor.close()
+        }
+
+        return out
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
