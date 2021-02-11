@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.Image
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -16,8 +15,10 @@ import android.text.format.DateFormat
 import android.view.*
 import android.widget.*
 import androidx.core.content.FileProvider
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import com.bignerdranch.android.criminalintent.MyDialogFragment.Companion.newInstance
 import java.io.File
 import java.util.*
 
@@ -206,6 +207,12 @@ class CrimeFragment : Fragment() {
         }
 
         photoView = v.findViewById(R.id.crime_photo)
+        photoView.setOnClickListener {
+            if (photoFile.exists()) {
+                val view: MyDialogFragment = newInstance(PictureUtils.getScaledBitmap(photoFile.path, activity!!))
+                fragmentManager?.let { manager -> view.show(manager, DIALOG_DATE) }
+            }
+        }
         updatePhotoView()
         return v
     }

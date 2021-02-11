@@ -9,6 +9,7 @@
     <string name="crime_date">Crime Date</string>
     <string name="police_required">police required</string>
     <string name="date_picker_title">Date of crime:</string>
+    <string name="image_dialog_title">Photo of crime:</string>
     <string name="new_crime">New Crime</string>
     <string name="delete_crime">Delete Crime</string>
     <string name="show_subtitle">Show Subtitle</string>
@@ -32,4 +33,5 @@
     <string name="send_report">Send crime report via</string>
     <string name="home">home</string>
     <string name="end">end</string>
+    <string name="crime_photo">Crime photo</string>
 </resources>
