@@ -8,4 +8,7 @@ class Crime(val requiresPolice: Boolean, val id: UUID) {
     var title: String = ""
     var isSolved: Boolean = false
     var suspect: String = ""
+    fun getPhotoFilename(): String {
+        return "IMG_ $id.jpg"
+    }
 }

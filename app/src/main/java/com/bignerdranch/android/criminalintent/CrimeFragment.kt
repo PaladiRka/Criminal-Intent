@@ -9,13 +9,16 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.provider.ContactsContract.CommonDataKinds.Phone
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.format.DateFormat
 import android.view.*
 import android.widget.*
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import java.io.File
 import java.util.*
 
 enum class Direction {
@@ -29,6 +32,7 @@ class CrimeFragment : Fragment() {
         private const val DIALOG_DATE = "DialogDate"
         private const val REQUEST_DATE = 0
         private const val REQUEST_CONTACT = 1
+        private const val REQUEST_PHOTO = 2
         fun newInstance(crimeId: UUID, direction: Direction): CrimeFragment {
             val args = Bundle()
             args.putSerializable(ARG_CRIME_ID, crimeId)
@@ -43,6 +47,7 @@ class CrimeFragment : Fragment() {
         activity?.setResult(Activity.RESULT_OK, null)
     }
 
+    private lateinit var photoFile: File
     private lateinit var crime: Crime
     private lateinit var titleField: EditText
     private lateinit var dateButton: Button
@@ -59,6 +64,7 @@ class CrimeFragment : Fragment() {
         super.onCreate(savedInstanceState)
         val crimeId: UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
         crime = CrimeLab.get(activity!!).getCrime(crimeId)!!
+        photoFile = CrimeLab.get(activity!!).getPhotoFile(crime)
         setHasOptionsMenu(true)
     }
 
@@ -172,6 +178,32 @@ class CrimeFragment : Fragment() {
             ) == null
         ) {
             suspectButton.isEnabled = false
+        }
+
+        photoView = v.findViewById(R.id.crime_photo)
+        photoButton = v.findViewById(R.id.crime_camera)
+        val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val canTakePhoto = packageManager?.let { captureImage.resolveActivity(it) } != null
+        photoButton.isEnabled = canTakePhoto
+        photoButton.setOnClickListener {
+            val uri = FileProvider.getUriForFile(
+                activity!!,
+                "com.bignerdranch.android.criminalintent.fileprovider",
+                photoFile
+            )
+            captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+            val cameraActivities = activity!!.packageManager.queryIntentActivities(
+                captureImage,
+                PackageManager.MATCH_DEFAULT_ONLY
+            )
+            for (cameraActivity in cameraActivities) {
+                activity!!.grantUriPermission(
+                    cameraActivity.activityInfo.packageName,
+                    uri,
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+            }
+            startActivityForResult(captureImage, REQUEST_PHOTO)
         }
 
         return v

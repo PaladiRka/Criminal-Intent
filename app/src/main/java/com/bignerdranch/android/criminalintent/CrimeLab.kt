@@ -1,17 +1,20 @@
 package com.bignerdranch.android.criminalintent
 
+import android.app.Application
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.bignerdranch.android.criminalintent.database.CrimeBaseHelper
 import com.bignerdranch.android.criminalintent.database.CrimeCursorWrapper
 import com.bignerdranch.android.criminalintent.database.CrimeDbSchema.CrimeTable
+import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 
 class CrimeLab private constructor(context: Context) {
     private val context: Context = context.applicationContext
     private val database: SQLiteDatabase = CrimeBaseHelper(this.context).writableDatabase
+    private val photoFile = null
 
     companion object {
         var crimeLab: CrimeLab? = null
@@ -84,6 +87,11 @@ class CrimeLab private constructor(context: Context) {
             cursor.close()
         }
         return crimes
+    }
+
+    fun getPhotoFile(crime: Crime): File {
+        val filesDir = context.filesDir
+        return File(filesDir, crime.getPhotoFilename())
     }
 
     fun updateCrime(crime: Crime) {
