@@ -180,7 +180,6 @@ class CrimeFragment : Fragment() {
             suspectButton.isEnabled = false
         }
 
-        photoView = v.findViewById(R.id.crime_photo)
         photoButton = v.findViewById(R.id.crime_camera)
         val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         val canTakePhoto = packageManager?.let { captureImage.resolveActivity(it) } != null
@@ -206,6 +205,8 @@ class CrimeFragment : Fragment() {
             startActivityForResult(captureImage, REQUEST_PHOTO)
         }
 
+        photoView = v.findViewById(R.id.crime_photo)
+        updatePhotoView()
         return v
     }
 
@@ -276,6 +277,14 @@ class CrimeFragment : Fragment() {
             } finally {
                 cursor?.close()
             }
+        } else if (requestCode == REQUEST_PHOTO) {
+            val uri = FileProvider.getUriForFile(
+                activity!!,
+                "com.bignerdranch.android.criminalintent.fileprovider",
+                photoFile
+            )
+            activity!!.revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            updatePhotoView()
         }
     }
 
@@ -293,6 +302,15 @@ class CrimeFragment : Fragment() {
         val suspect =
             if (crime.suspect == "") getString(R.string.crime_report_no_suspect) else getString(R.string.crime_report_suspect)
         return getString(R.string.crime_report, title, dateString, solvedString, suspect)
+    }
+
+    private fun updatePhotoView() {
+        if (!photoFile.exists()) {
+            photoView.setImageDrawable(null)
+        } else {
+            val bitmap = PictureUtils.getScaledBitmap(photoFile.path, activity!!)
+            photoView.setImageBitmap(bitmap)
+        }
     }
 
 }
