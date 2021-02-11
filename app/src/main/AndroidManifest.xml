@@ -30,8 +30,8 @@
                 android:resource="@xml/files" />
         </provider>
     </application>
-    <user-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
+<!--    <user-feature-->
+<!--        android:name="android.hardware.camera"-->
+<!--        android:required="false" />-->
 
 </manifest>
