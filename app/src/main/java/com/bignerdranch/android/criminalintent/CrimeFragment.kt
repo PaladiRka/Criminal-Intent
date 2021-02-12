@@ -99,7 +99,7 @@ class CrimeFragment : Fragment() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                crime.title = s.toString()
+                crime = crime.copy(title = s.toString())
                 returnResult()
             }
 
@@ -148,7 +148,7 @@ class CrimeFragment : Fragment() {
         solvedCheckBox = v.findViewById(R.id.crime_solved)
         solvedCheckBox.isChecked = crime.isSolved
         solvedCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            crime.isSolved = isChecked
+            crime = crime.copy(isSolved = isChecked)
             returnResult()
         }
 
@@ -264,7 +264,7 @@ class CrimeFragment : Fragment() {
 
         if (requestCode == REQUEST_DATE) {
             val date = data?.getSerializableExtra(DatePickerFragment.EXTRA_DATE) as Date
-            crime.date = date
+            crime = crime.copy(date = date)
             updateDate()
         } else if (requestCode == REQUEST_CONTACT && data != null) {
             val contactUri: Uri = data.data as Uri
@@ -272,14 +272,14 @@ class CrimeFragment : Fragment() {
             val cursor = activity?.contentResolver?.query(contactUri, queryFields, null, null, null)
             try {
                 if (cursor!!.count == 0) {
-                    crime.suspect = ""
+                    crime = crime.copy(suspect = "")
                     suspectButton.text = ""
                     return
                 }
 
                 cursor.moveToFirst()
                 val suspect = cursor.getString(0)
-                crime.suspect = suspect
+                crime = crime.copy(suspect = suspect)
                 suspectButton.text = suspect
             } finally {
                 cursor?.close()
@@ -319,5 +319,4 @@ class CrimeFragment : Fragment() {
             photoView.setImageBitmap(bitmap)
         }
     }
-
 }
