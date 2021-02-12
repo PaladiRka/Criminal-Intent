@@ -307,7 +307,7 @@ class CrimeFragment : Fragment() {
         val title = crime.title
 
         val suspect =
-            if (crime.suspect == "") getString(R.string.crime_report_no_suspect) else getString(R.string.crime_report_suspect)
+            if (crime.suspect == "") getString(R.string.crime_report_no_suspect) else getString(R.string.crime_report_suspect, crime.suspect)
         return getString(R.string.crime_report, title, dateString, solvedString, suspect)
     }
 
