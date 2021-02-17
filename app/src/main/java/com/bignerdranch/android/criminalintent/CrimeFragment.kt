@@ -91,7 +91,11 @@ class CrimeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val v = inflater.inflate(R.layout.fragment_crime, container, false)
-        titleField = v.findViewById(R.id.crime_title)
+        return v
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        titleField = view.findViewById(R.id.crime_title)
         titleField.setText(crime.title)
         titleField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -108,7 +112,7 @@ class CrimeFragment : Fragment() {
             }
         })
 
-        reportButton = v.findViewById(R.id.crime_report)
+        reportButton = view.findViewById(R.id.crime_report)
         reportButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "text/plain"
@@ -118,7 +122,7 @@ class CrimeFragment : Fragment() {
             startActivity(chooseIntent)
         }
 
-        dateButton = v.findViewById(R.id.crime_date)
+        dateButton = view.findViewById(R.id.crime_date)
         dateButton.setOnClickListener {
             val dialog = DatePickerFragment.newInstance(crime.date)
             dialog.setTargetFragment(this, REQUEST_DATE)
@@ -127,7 +131,7 @@ class CrimeFragment : Fragment() {
         updateDate()
 
         val mode = arguments?.getSerializable(ARG_CRIME_MODE)
-        homeButton = v.findViewById(R.id.home_button)
+        homeButton = view.findViewById(R.id.home_button)
         homeButton.isEnabled = ((mode != Direction.ONLY_RIGHT) && (mode != Direction.NOWHERE))
         homeButton.setOnClickListener {
             val pager = activity?.findViewById<ViewPager2>(R.id.crime_view_pager)
@@ -136,7 +140,7 @@ class CrimeFragment : Fragment() {
             }
         }
 
-        endButton = v.findViewById(R.id.end_button)
+        endButton = view.findViewById(R.id.end_button)
         endButton.isEnabled = ((mode != Direction.ONLY_LEFT) && (mode != Direction.NOWHERE))
         endButton.setOnClickListener {
             val pager = activity?.findViewById<ViewPager2>(R.id.crime_view_pager)
@@ -145,7 +149,7 @@ class CrimeFragment : Fragment() {
             }
         }
 
-        solvedCheckBox = v.findViewById(R.id.crime_solved)
+        solvedCheckBox = view.findViewById(R.id.crime_solved)
         solvedCheckBox.isChecked = crime.isSolved
         solvedCheckBox.setOnCheckedChangeListener { _, isChecked ->
             crime = crime.copy(isSolved = isChecked)
@@ -154,7 +158,7 @@ class CrimeFragment : Fragment() {
 
         val pickContact = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
 
-        suspectCallButton = v.findViewById(R.id.crime_suspect_call)
+        suspectCallButton = view.findViewById(R.id.crime_suspect_call)
         suspectCallButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_DIAL)
             val phone = getContactNumber(requireActivity(), crime.suspect)
@@ -163,7 +167,7 @@ class CrimeFragment : Fragment() {
         }
         suspectCallButton.isEnabled = crime.suspect != ""
 
-        suspectButton = v.findViewById(R.id.crime_suspect)
+        suspectButton = view.findViewById(R.id.crime_suspect)
         suspectButton.setOnClickListener {
             startActivityForResult(pickContact, REQUEST_CONTACT)
         }
@@ -181,7 +185,7 @@ class CrimeFragment : Fragment() {
             suspectButton.isEnabled = false
         }
 
-        photoButton = v.findViewById(R.id.crime_camera)
+        photoButton = view.findViewById(R.id.crime_camera)
         val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         val canTakePhoto = packageManager?.let { captureImage.resolveActivity(it) } != null
         photoButton.isEnabled = canTakePhoto
@@ -206,7 +210,7 @@ class CrimeFragment : Fragment() {
             startActivityForResult(captureImage, REQUEST_PHOTO)
         }
 
-        photoView = v.findViewById(R.id.crime_photo)
+        photoView = view.findViewById(R.id.crime_photo)
         photoView.setOnClickListener {
             if (photoFile.exists()) {
                 val view: MyDialogFragment = newInstance(PictureUtils.getScaledBitmap(photoFile.path, requireActivity()))
@@ -214,7 +218,6 @@ class CrimeFragment : Fragment() {
             }
         }
         updatePhotoView()
-        return v
     }
 
     override fun onPause() {
