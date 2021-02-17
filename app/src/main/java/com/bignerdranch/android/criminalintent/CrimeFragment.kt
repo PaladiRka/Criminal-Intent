@@ -64,8 +64,8 @@ class CrimeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val crimeId: UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
-        crime = CrimeLab.get(activity!!).getCrime(crimeId)!!
-        photoFile = CrimeLab.get(activity!!).getPhotoFile(crime)
+        crime = CrimeLab.get(requireActivity()).getCrime(crimeId)!!
+        photoFile = CrimeLab.get(requireActivity()).getPhotoFile(crime)
         setHasOptionsMenu(true)
     }
 
@@ -77,7 +77,7 @@ class CrimeFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.delete_crime -> {
-                CrimeLab.get(activity!!).deleteCrime(crime)
+                CrimeLab.get(requireActivity()).deleteCrime(crime)
                 activity?.finish()
                 true
             }
@@ -141,7 +141,7 @@ class CrimeFragment : Fragment() {
         endButton.setOnClickListener {
             val pager = activity?.findViewById<ViewPager2>(R.id.crime_view_pager)
             if (pager != null) {
-                pager.currentItem = CrimeLab.get(activity!!).getCrimes().size - 1
+                pager.currentItem = CrimeLab.get(requireActivity()).getCrimes().size - 1
             }
         }
 
@@ -157,9 +157,9 @@ class CrimeFragment : Fragment() {
         suspectCallButton = v.findViewById(R.id.crime_suspect_call)
         suspectCallButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_DIAL)
-            val phone = getContactNumber(activity!!, crime.suspect)
+            val phone = getContactNumber(requireActivity(), crime.suspect)
             intent.data = Uri.parse("tel:$phone")
-            context!!.startActivity(intent)
+            requireContext().startActivity(intent)
         }
         suspectCallButton.isEnabled = crime.suspect != ""
 
@@ -187,17 +187,17 @@ class CrimeFragment : Fragment() {
         photoButton.isEnabled = canTakePhoto
         photoButton.setOnClickListener {
             val uri = FileProvider.getUriForFile(
-                activity!!,
+                requireActivity(),
                 "com.bignerdranch.android.criminalintent.fileprovider",
                 photoFile
             )
             captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-            val cameraActivities = activity!!.packageManager.queryIntentActivities(
+            val cameraActivities = requireActivity().packageManager.queryIntentActivities(
                 captureImage,
                 PackageManager.MATCH_DEFAULT_ONLY
             )
             for (cameraActivity in cameraActivities) {
-                activity!!.grantUriPermission(
+                requireActivity().grantUriPermission(
                     cameraActivity.activityInfo.packageName,
                     uri,
                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -209,7 +209,7 @@ class CrimeFragment : Fragment() {
         photoView = v.findViewById(R.id.crime_photo)
         photoView.setOnClickListener {
             if (photoFile.exists()) {
-                val view: MyDialogFragment = newInstance(PictureUtils.getScaledBitmap(photoFile.path, activity!!))
+                val view: MyDialogFragment = newInstance(PictureUtils.getScaledBitmap(photoFile.path, requireActivity()))
                 fragmentManager?.let { manager -> view.show(manager, DIALOG_DATE) }
             }
         }
@@ -220,7 +220,7 @@ class CrimeFragment : Fragment() {
     override fun onPause() {
         super.onPause()
 
-        CrimeLab.get(activity!!).updateCrime(crime)
+        CrimeLab.get(requireActivity()).updateCrime(crime)
     }
 
     private fun getContactNumber(context: Context, name: String): String? {
@@ -286,11 +286,11 @@ class CrimeFragment : Fragment() {
             }
         } else if (requestCode == REQUEST_PHOTO) {
             val uri = FileProvider.getUriForFile(
-                activity!!,
+                requireActivity(),
                 "com.bignerdranch.android.criminalintent.fileprovider",
                 photoFile
             )
-            activity!!.revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            requireActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             updatePhotoView()
         }
     }
@@ -315,7 +315,7 @@ class CrimeFragment : Fragment() {
         if (!photoFile.exists()) {
             photoView.setImageDrawable(null)
         } else {
-            val bitmap = PictureUtils.getScaledBitmap(photoFile.path, activity!!)
+            val bitmap = PictureUtils.getScaledBitmap(photoFile.path, requireActivity())
             photoView.setImageBitmap(bitmap)
         }
     }
