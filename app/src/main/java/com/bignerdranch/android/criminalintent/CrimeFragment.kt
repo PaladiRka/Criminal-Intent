@@ -50,16 +50,7 @@ class CrimeFragment : Fragment() {
 
     private lateinit var photoFile: File
     private lateinit var crime: Crime
-    private lateinit var titleField: EditText
-    private lateinit var dateButton: Button
-    private lateinit var solvedCheckBox: CheckBox
-    private lateinit var homeButton: Button
-    private lateinit var endButton: Button
-    private lateinit var reportButton: Button
-    private lateinit var suspectButton: Button
-    private lateinit var suspectCallButton: Button
-    private lateinit var photoButton: ImageButton
-    private lateinit var photoView: ImageView
+    private lateinit var fragmentView: CrimeFragmentView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,9 +86,9 @@ class CrimeFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        titleField = view.findViewById(R.id.crime_title)
-        titleField.setText(crime.title)
-        titleField.addTextChangedListener(object : TextWatcher {
+        fragmentView = CrimeFragmentView(view)
+        fragmentView.titleField.setText(crime.title)
+        fragmentView.titleField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
             }
@@ -112,8 +103,7 @@ class CrimeFragment : Fragment() {
             }
         })
 
-        reportButton = view.findViewById(R.id.crime_report)
-        reportButton.setOnClickListener {
+        fragmentView.reportButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "text/plain"
             intent.putExtra(Intent.EXTRA_TEXT, getCrimeReport())
@@ -122,8 +112,7 @@ class CrimeFragment : Fragment() {
             startActivity(chooseIntent)
         }
 
-        dateButton = view.findViewById(R.id.crime_date)
-        dateButton.setOnClickListener {
+        fragmentView.dateButton.setOnClickListener {
             val dialog = DatePickerFragment.newInstance(crime.date)
             dialog.setTargetFragment(this, REQUEST_DATE)
             fragmentManager?.let { manager -> dialog.show(manager, DIALOG_DATE) }
@@ -131,49 +120,44 @@ class CrimeFragment : Fragment() {
         updateDate()
 
         val mode = arguments?.getSerializable(ARG_CRIME_MODE)
-        homeButton = view.findViewById(R.id.home_button)
-        homeButton.isEnabled = ((mode != Direction.ONLY_RIGHT) && (mode != Direction.NOWHERE))
-        homeButton.setOnClickListener {
+        fragmentView.homeButton.isEnabled = ((mode != Direction.ONLY_RIGHT) && (mode != Direction.NOWHERE))
+        fragmentView.homeButton.setOnClickListener {
             val pager = activity?.findViewById<ViewPager2>(R.id.crime_view_pager)
             if (pager != null) {
                 pager.currentItem = 0
             }
         }
 
-        endButton = view.findViewById(R.id.end_button)
-        endButton.isEnabled = ((mode != Direction.ONLY_LEFT) && (mode != Direction.NOWHERE))
-        endButton.setOnClickListener {
+        fragmentView.endButton.isEnabled = ((mode != Direction.ONLY_LEFT) && (mode != Direction.NOWHERE))
+        fragmentView.endButton.setOnClickListener {
             val pager = activity?.findViewById<ViewPager2>(R.id.crime_view_pager)
             if (pager != null) {
                 pager.currentItem = CrimeLab.get(requireActivity()).getCrimes().size - 1
             }
         }
 
-        solvedCheckBox = view.findViewById(R.id.crime_solved)
-        solvedCheckBox.isChecked = crime.isSolved
-        solvedCheckBox.setOnCheckedChangeListener { _, isChecked ->
+        fragmentView.solvedCheckBox.isChecked = crime.isSolved
+        fragmentView.solvedCheckBox.setOnCheckedChangeListener { _, isChecked ->
             crime = crime.copy(isSolved = isChecked)
             returnResult()
         }
 
         val pickContact = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
 
-        suspectCallButton = view.findViewById(R.id.crime_suspect_call)
-        suspectCallButton.setOnClickListener {
+        fragmentView.suspectCallButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_DIAL)
             val phone = getContactNumber(requireActivity(), crime.suspect)
             intent.data = Uri.parse("tel:$phone")
             requireContext().startActivity(intent)
         }
-        suspectCallButton.isEnabled = crime.suspect != ""
+        fragmentView.suspectCallButton.isEnabled = crime.suspect != ""
 
-        suspectButton = view.findViewById(R.id.crime_suspect)
-        suspectButton.setOnClickListener {
+        fragmentView.suspectButton.setOnClickListener {
             startActivityForResult(pickContact, REQUEST_CONTACT)
         }
 
         if (crime.suspect != "") {
-            suspectButton.text = crime.suspect
+            fragmentView.suspectButton.text = crime.suspect
         }
 
         val packageManager = activity?.packageManager
@@ -182,14 +166,13 @@ class CrimeFragment : Fragment() {
                 PackageManager.MATCH_DEFAULT_ONLY
             ) == null
         ) {
-            suspectButton.isEnabled = false
+            fragmentView.suspectButton.isEnabled = false
         }
 
-        photoButton = view.findViewById(R.id.crime_camera)
         val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         val canTakePhoto = packageManager?.let { captureImage.resolveActivity(it) } != null
-        photoButton.isEnabled = canTakePhoto
-        photoButton.setOnClickListener {
+        fragmentView.photoButton.isEnabled = canTakePhoto
+        fragmentView.photoButton.setOnClickListener {
             val uri = FileProvider.getUriForFile(
                 requireActivity(),
                 "com.bignerdranch.android.criminalintent.fileprovider",
@@ -210,8 +193,7 @@ class CrimeFragment : Fragment() {
             startActivityForResult(captureImage, REQUEST_PHOTO)
         }
 
-        photoView = view.findViewById(R.id.crime_photo)
-        photoView.setOnClickListener {
+        fragmentView.photoView.setOnClickListener {
             if (photoFile.exists()) {
                 val view: MyDialogFragment = newInstance(PictureUtils.getScaledBitmap(photoFile.path, requireActivity()))
                 fragmentManager?.let { manager -> view.show(manager, DIALOG_DATE) }
@@ -276,14 +258,14 @@ class CrimeFragment : Fragment() {
             try {
                 if (cursor!!.count == 0) {
                     crime = crime.copy(suspect = "")
-                    suspectButton.text = ""
+                    fragmentView.suspectButton.text = ""
                     return
                 }
 
                 cursor.moveToFirst()
                 val suspect = cursor.getString(0)
                 crime = crime.copy(suspect = suspect)
-                suspectButton.text = suspect
+                fragmentView.suspectButton.text = suspect
             } finally {
                 cursor?.close()
             }
@@ -299,7 +281,7 @@ class CrimeFragment : Fragment() {
     }
 
     private fun updateDate() {
-        dateButton.text = DateFormat.format("EEEE, MMM dd, yyyy", crime.date)
+        fragmentView.dateButton.text = DateFormat.format("EEEE, MMM dd, yyyy", crime.date)
     }
 
     private fun getCrimeReport(): String {
@@ -316,10 +298,10 @@ class CrimeFragment : Fragment() {
 
     private fun updatePhotoView() {
         if (!photoFile.exists()) {
-            photoView.setImageDrawable(null)
+            fragmentView.photoView.setImageDrawable(null)
         } else {
             val bitmap = PictureUtils.getScaledBitmap(photoFile.path, requireActivity())
-            photoView.setImageBitmap(bitmap)
+            fragmentView.photoView.setImageBitmap(bitmap)
         }
     }
 }
